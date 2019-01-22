@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Sign In with Auth0</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Define functions to detect when a DOM element is ready. -->
+  <script>
+    (function (win) {
+      'use strict';
+
+      var listeners = [],
+        doc = win.document,
+        MutationObserver = win.MutationObserver || win.WebKitMutationObserver,
+        observer;
+
+      function ready(selector, fn) {
+        listeners.push({
+          selector: selector,
+          fn: fn
+        });
+        if (!observer) {
+          // Watch for changes in the document
+          observer = new MutationObserver(check);
+          observer.observe(doc.documentElement, {
+            childList: true,
+            subtree: true
+          });
+        }
+        // Check if the element is currently in the DOM
+        check();
+      }
+
+      function check() {
+        // Check the DOM for elements matching a stored selector
+        for (var i = 0, len = listeners.length, listener, elements; i < len; i++) {
+          listener = listeners[i];
+          // Query for elements matching the specified selector
+          elements = doc.querySelectorAll(listener.selector);
+          for (var j = 0, jLen = elements.length, element; j < jLen; j++) {
+            element = elements[j];
+            // Make sure the callback isn't invoked with the same element more than once
+            if (!element.ready) {
+              element.ready = true;
+              // Invoke the callback with the element
+              listener.fn.call(element, element);
+            }
+          }
+        }
+      }
+      // Expose `ready`
+      win.ready = ready;
+
+    })(this);
+
+    // EXAMPLE: Insert a custom login text after the .auth0-lock-alternative element.
+    ready('.auth0-lock-alternative', function (element) {
+      let loginTextElement = document.createElement('p');
+      loginTextElement.innerText = "Please contact IT Support if you are having trouble signing in";
+      element.parentNode.insertBefore(loginTextElement, element.nextSibling);
+    });
+  </script>
+</head>
+
+<body>
+
+  <script src="https://cdn.auth0.com/js/lock/11.11/lock.min.js"></script>
+  <script>
+    // Decode utf8 characters properly
+    var config = JSON.parse(decodeURIComponent(escape(window.atob('@@config@@'))));
+    config.extraParams = config.extraParams || {};
+    var connection = config.connection;
+    var prompt = config.prompt;
+    var languageDictionary;
+    var language;
+
+    if (config.dict && config.dict.signin && config.dict.signin.title) {
+      languageDictionary = {
+        title: config.dict.signin.title
+      };
+    } else if (typeof config.dict === 'string') {
+      language = config.dict;
+    }
+    var loginHint = config.extraParams.login_hint;
+
+    // Available Lock configuration options: https://auth0.com/docs/libraries/lock/v11/configuration
+    var lock = new Auth0Lock(config.clientID, config.auth0Domain, {
+      auth: {
+        redirectUrl: config.callbackURL,
+        responseType: (config.internalOptions || {}).response_type ||
+          (config.callbackOnLocationHash ? 'token' : 'code'),
+        params: config.internalOptions
+      },
+      configurationBaseUrl: config.clientConfigurationBaseUrl,
+      overrides: {
+        __tenant: config.auth0Tenant,
+        __token_issuer: config.authorizationServer.issuer
+      },
+      assetsUrl: config.assetsUrl,
+      allowedConnections: connection ? [connection] : null,
+      rememberLastLogin: !prompt,
+      language: language,
+      languageDictionary: languageDictionary,
+      theme: {
+        //logo:            'YOUR LOGO HERE',
+        //primaryColor:    'green'
+      },
+      prefill: loginHint ? {
+        email: loginHint,
+        username: loginHint
+      } : null,
+      closable: false,
+      defaultADUsernameFromEmailPrefix: false,
+      // uncomment if you want small buttons for social providers
+      // socialButtonStyle: 'small'
+    });
+
+    lock.show();
+  </script>
+</body>
+
+</html>
