@@ -17,4 +17,7 @@ ready('DOM_ELEMENT_SELECTOR', function (element) {
 `CUSTOM_TEXT` is the text that will be displayed.
 
 
+### Result:
+![Auth0 Lock](https://i.imgur.com/tZbJv9b.png)
+
 Disclaimer: Auth0 Lock includes a lot of [UI customizations](https://auth0.com/docs/libraries/lock/v11/ui-customization) built-in already. Overriding the default look and feel via custom JS/CSS is not recommended unless there are no other options available. Later versions of Lock may lead to this code not working or requiring changes.
