@@ -1,4 +1,4 @@
-# auth0-Lock-DOM-Customization
+# Auth0 Lock DOM Customizations
 How to manipulate the DOM in the [Auth0 Lock](https://auth0.com/docs/libraries/lock/v11) hosted login page.
 
 ### How:
